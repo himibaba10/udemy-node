@@ -1,4 +1,16 @@
-const products = [];
+const fs = require("fs");
+const path = require("path");
+
+const p = path.join(process.cwd(), "data", "products.json");
+
+const getProductsFromFile = (cb) => {
+  fs.readFile(p, "utf-8", (err, data) => {
+    if (err) {
+      return cb([]);
+    }
+    return cb(JSON.parse(data));
+  });
+};
 
 class Product {
   constructor(title) {
@@ -6,11 +18,19 @@ class Product {
   }
 
   save() {
-    products.push(this);
+    getProductsFromFile((products) => {
+      fs.writeFile(p, JSON.stringify(products), (err) => {
+        if (err) {
+          console.log("Error writing product data: ", err);
+          return;
+        }
+        products.push(this);
+      });
+    });
   }
 
-  static fetchAll() {
-    return products;
+  static fetchAll(cb) {
+    getProductsFromFile(cb);
   }
 }
 
