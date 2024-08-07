@@ -14,6 +14,7 @@ const getProductsFromFile = (cb) => {
 
 class Product {
   constructor(title, price, imageUrl, description) {
+    this.id = Math.floor(Math.random() * 10000).toString();
     this.title = title;
     this.price = price;
     this.imageUrl = imageUrl;
@@ -34,6 +35,13 @@ class Product {
 
   static fetchAll(cb) {
     getProductsFromFile(cb);
+  }
+
+  static fetch(id, cb) {
+    getProductsFromFile((products) => {
+      const product = products.find((prod) => prod.id === id);
+      cb(product);
+    });
   }
 }
 
