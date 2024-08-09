@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const Cart = require("./cart");
 
 const p = path.join(process.cwd(), "data", "products.json");
 
@@ -41,6 +42,41 @@ class Product {
     getProductsFromFile((products) => {
       const product = products.find((prod) => prod.id === id);
       cb(product);
+    });
+  }
+
+  static update(productData, cb) {
+    getProductsFromFile((products) => {
+      const updatedProductIndex = products.findIndex(
+        (prod) => prod.id === productData.id
+      );
+      const updatedProducts = [...products];
+      updatedProducts[updatedProductIndex] = productData;
+      fs.writeFile(p, JSON.stringify(updatedProducts), (err) => {
+        if (err) {
+          console.log("Error writing product data: ", err);
+          return;
+        } else {
+          cb();
+        }
+      });
+    });
+  }
+
+  static delete(id, cb) {
+    getProductsFromFile((products) => {
+      const product = products.find((prod) => prod.id === id);
+      const updatedProducts = products.filter((prod) => prod.id !== id);
+      fs.writeFile(p, JSON.stringify(updatedProducts), (err) => {
+        if (err) {
+          console.log("Error deleting product data: ", err);
+          return;
+        } else {
+          Cart.deleteProduct(product.id, product.price, () => {
+            cb();
+          });
+        }
+      });
     });
   }
 }

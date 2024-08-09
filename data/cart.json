@@ -1,7 +1,1 @@
-{"products":
-    [
-        {"prodId":"9821","qty":2},
-        {"prodId":"9822","qty":2},
-        {"prodId":"9823","qty":1}
-    ],
-    "totalPrice":99}
+{"products":[{"prodId":"9823","qty":1},{"prodId":"2593","qty":2}],"totalPrice":51}

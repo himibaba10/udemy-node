@@ -11,9 +11,11 @@ const getProducts = (req, res, next) => {
 };
 
 const getAddProducts = (req, res, next) => {
-  res.render("admin/add-product", {
+  res.render("admin/edit-product", {
     pageTitle: "Add Product",
     path: "/admin/add-product",
+    editing: false,
+    product: null,
   });
 };
 
@@ -28,8 +30,37 @@ const postAddProducts = (req, res, next) => {
   res.redirect("/");
 };
 
+const getEditProducts = (req, res, next) => {
+  Product.findById(req.params.productId, (product) => {
+    if (!product) {
+      return res.redirect("/");
+    }
+    res.render("admin/edit-product", {
+      pageTitle: "Edit Product",
+      path: "/admin/edit-product",
+      product,
+      editing: true,
+    });
+  });
+};
+
+const postEditProduct = (req, res, next) => {
+  Product.update(req.body, () => {
+    res.redirect("/admin/products");
+  });
+};
+
+const postDeleteProduct = (req, res, next) => {
+  Product.delete(req.body.id, () => {
+    res.redirect("/admin/products");
+  });
+};
+
 module.exports = {
   getProducts,
   getAddProducts,
   postAddProducts,
+  getEditProducts,
+  postEditProduct,
+  postDeleteProduct,
 };
