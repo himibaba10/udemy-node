@@ -56,6 +56,15 @@ class Cart {
       });
     });
   }
+
+  static getProducts(cb) {
+    fs.readFile(p, (err, cartData) => {
+      if (err) {
+        console.log("Error getting cart products: ", err);
+      }
+      cb(JSON.parse(cartData));
+    });
+  }
 }
 
 module.exports = Cart;
