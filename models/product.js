@@ -1,19 +1,5 @@
-const fs = require("fs");
-const path = require("path");
 const Cart = require("./cart");
 const db = require("../utils/database");
-
-const p = path.join(process.cwd(), "data", "products.json");
-
-const getProductsFromFile = (cb) => {
-  fs.readFile(p, "utf-8", (err, data) => {
-    if (err) {
-      return cb([]);
-    }
-    return cb(JSON.parse(data));
-  });
-};
-
 class Product {
   constructor(title, price, imageUrl, description) {
     this.id = Math.floor(Math.random() * 10000).toString();
@@ -39,11 +25,8 @@ class Product {
     return db.execute("SELECT * FROM products");
   }
 
-  static findById(id, cb) {
-    getProductsFromFile((products) => {
-      const product = products.find((prod) => prod.id === id);
-      cb(product);
-    });
+  static findById(id) {
+    return db.execute("SELECT * FROM products WHERE products.id = ?", [id]);
   }
 
   static update(productData, cb) {

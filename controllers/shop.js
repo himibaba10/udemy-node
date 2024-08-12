@@ -12,13 +12,15 @@ const getProducts = (req, res, next) => {
 };
 
 const getProduct = (req, res, next) => {
-  Product.findById(req.params.productId, (product) => {
-    res.render("shop/product-detail", {
-      product: product,
-      pageTitle: "Product Detail",
-      path: "/products",
-    });
-  });
+  Product.findById(req.params.productId)
+    .then(([product]) => {
+      res.render("shop/product-detail", {
+        product: product[0],
+        pageTitle: "Product Detail",
+        path: "/products",
+      });
+    })
+    .catch();
 };
 
 const getIndex = (req, res, next) => {
