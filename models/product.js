@@ -10,15 +10,10 @@ class Product {
   }
 
   save() {
-    getProductsFromFile((products) => {
-      products.push(this);
-      fs.writeFile(p, JSON.stringify(products), (err) => {
-        if (err) {
-          console.log("Error writing product data: ", err);
-          return;
-        }
-      });
-    });
+    return db.execute(
+      "INSERT INTO products (title, price, imageUrl, description) VALUES (?, ?, ?, ?)",
+      [this.title, this.price, this.imageUrl, this.description]
+    );
   }
 
   static fetchAll() {

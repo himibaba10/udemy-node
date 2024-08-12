@@ -26,8 +26,14 @@ const postAddProducts = (req, res, next) => {
     req.body.imageUrl,
     req.body.description
   );
-  product.save();
-  res.redirect("/");
+  product
+    .save()
+    .then(() => {
+      res.redirect("/");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 const getEditProducts = (req, res, next) => {
