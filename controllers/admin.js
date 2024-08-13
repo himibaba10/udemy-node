@@ -40,23 +40,40 @@ const postAddProducts = (req, res, next) => {
 };
 
 const getEditProducts = (req, res, next) => {
-  Product.findById(req.params.productId, (product) => {
-    if (!product) {
-      return res.redirect("/");
-    }
-    res.render("admin/edit-product", {
-      pageTitle: "Edit Product",
-      path: "/admin/edit-product",
-      product,
-      editing: true,
+  Product.findByPk(req.params.productId)
+    .then((product) => {
+      if (!product) {
+        return res.redirect("/");
+      }
+      res.render("admin/edit-product", {
+        pageTitle: "Edit Product",
+        path: "/admin/edit-product",
+        product,
+        editing: true,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
     });
-  });
 };
 
 const postEditProduct = (req, res, next) => {
-  Product.update(req.body, () => {
-    res.redirect("/admin/products");
-  });
+  Product.findByPk(req.body.id)
+    .then((product) => {
+      product.title = req.body.title;
+      product.price = req.body.price;
+      product.imageUrl = req.body.imageUrl;
+      product.description = req.body.description;
+
+      return product.save();
+    })
+    .then(() => {
+      console.log("Product updated successfully");
+      res.redirect("/admin/products");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 const postDeleteProduct = (req, res, next) => {
