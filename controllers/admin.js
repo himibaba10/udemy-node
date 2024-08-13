@@ -20,15 +20,14 @@ const getAddProducts = (req, res, next) => {
 };
 
 const postAddProducts = (req, res, next) => {
-  const product = new Product(
-    req.body.title,
-    req.body.price,
-    req.body.imageUrl,
-    req.body.description
-  );
-  product
-    .save()
+  Product.create({
+    title: req.body.title,
+    price: req.body.price,
+    imageUrl: req.body.imageUrl,
+    description: req.body.description,
+  })
     .then(() => {
+      console.log("Created product successfully");
       res.redirect("/");
     })
     .catch((err) => {
