@@ -23,6 +23,18 @@ app.use(shopRoutes);
 
 app.use(getError);
 
+// Creating middleware to access the user everywhere in the project
+app.use((req, res, next) => {
+  User.findByPk(1)
+    .then((user) => {
+      req.user = user;
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
 // Relations between the models
 Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 
