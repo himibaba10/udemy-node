@@ -12,6 +12,8 @@ const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const { getError } = require("./controllers/error");
 const sequelize = require("./utils/database");
+const Product = require("./models/product");
+const User = require("./models/user");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
@@ -21,8 +23,11 @@ app.use(shopRoutes);
 
 app.use(getError);
 
+// Relations between the models
+Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
+
 sequelize
-  .sync()
+  .sync({ force: true })
   .then(() => {
     app.listen(3000, () => {
       console.log("App is running on port 3000 and connected to sequelize");
