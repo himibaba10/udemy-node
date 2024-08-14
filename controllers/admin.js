@@ -24,7 +24,6 @@ const getAddProducts = (req, res, next) => {
 };
 
 const postAddProducts = (req, res, next) => {
-  console.log({ userData: req.user.createProduct });
   req.user
     .createProduct({
       title: req.body.title,
@@ -42,8 +41,10 @@ const postAddProducts = (req, res, next) => {
 };
 
 const getEditProducts = (req, res, next) => {
-  Product.findByPk(req.params.productId)
-    .then((product) => {
+  req.user
+    .getProducts({ where: { id: req.params.productId } })
+    .then((products) => {
+      const product = products[0];
       if (!product) {
         return res.redirect("/");
       }
