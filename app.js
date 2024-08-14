@@ -27,7 +27,17 @@ app.use(getError);
 Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 
 sequelize
-  .sync({ force: true })
+  // .sync({ force: true }) //for development
+  .sync() //for production
+  .then(() => {
+    return User.findByPk(1);
+  })
+  .then((user) => {
+    if (!user) {
+      return User.create({ name: "Ferdous", email: "himibaba10@gmail.com" });
+    }
+    return user;
+  })
   .then(() => {
     app.listen(3000, () => {
       console.log("App is running on port 3000 and connected to sequelize");
