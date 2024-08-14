@@ -18,11 +18,6 @@ const User = require("./models/user");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/admin", adminRoutes);
-app.use(shopRoutes);
-
-app.use(getError);
-
 // Creating middleware to access the user everywhere in the project
 app.use((req, res, next) => {
   User.findByPk(1)
@@ -35,8 +30,14 @@ app.use((req, res, next) => {
     });
 });
 
+app.use("/admin", adminRoutes);
+app.use(shopRoutes);
+
+app.use(getError);
+
 // Relations between the models
 Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
+User.hasMany(Product);
 
 sequelize
   // .sync({ force: true }) //for development

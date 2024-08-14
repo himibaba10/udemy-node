@@ -24,12 +24,14 @@ const getAddProducts = (req, res, next) => {
 };
 
 const postAddProducts = (req, res, next) => {
-  Product.create({
-    title: req.body.title,
-    price: req.body.price,
-    imageUrl: req.body.imageUrl,
-    description: req.body.description,
-  })
+  console.log({ userData: req.user.createProduct });
+  req.user
+    .createProduct({
+      title: req.body.title,
+      price: req.body.price,
+      imageUrl: req.body.imageUrl,
+      description: req.body.description,
+    })
     .then(() => {
       console.log("Created product successfully");
       res.redirect("/");
