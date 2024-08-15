@@ -48,7 +48,6 @@ const getCart = (req, res, next) => {
     .getCart()
     .then((cart) => {
       return cart.getProducts().then((products) => {
-        console.log(products);
         res.render("shop/cart", {
           products: products,
           pageTitle: "Cart",
@@ -99,11 +98,20 @@ const postCart = (req, res, next) => {
 
 const deleteCart = (req, res, next) => {
   const { productId } = req.body;
-  Product.findById(productId, (product) => {
-    Cart.deleteProduct(productId, product.price, () => {
+  req.user
+    .getCart()
+    .then((cart) => {
+      return cart.getProducts({ where: { id: productId } });
+    })
+    .then(([product]) => {
+      return product.cartItem.destroy();
+    })
+    .then(() => {
       res.redirect("/cart");
+    })
+    .catch((err) => {
+      console.log(err);
     });
-  });
 };
 
 const getOrders = (req, res, next) => {
