@@ -116,9 +116,11 @@ const deleteCart = (req, res, next) => {
 
 const postOrder = (req, res, next) => {
   let productsInCart;
+  let fetchedCart;
   req.user
     .getCart()
     .then((cart) => {
+      fetchedCart = cart;
       return cart.getProducts();
     })
     .then((products) => {
@@ -132,6 +134,9 @@ const postOrder = (req, res, next) => {
           return product;
         })
       );
+    })
+    .then(() => {
+      fetchedCart.setProducts(null);
     })
     .then(() => {
       res.redirect("/orders");
