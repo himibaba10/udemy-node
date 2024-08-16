@@ -114,6 +114,33 @@ const deleteCart = (req, res, next) => {
     });
 };
 
+const postOrder = (req, res, next) => {
+  let productsInCart;
+  req.user
+    .getCart()
+    .then((cart) => {
+      return cart.getProducts();
+    })
+    .then((products) => {
+      productsInCart = products;
+      return req.user.createOrder();
+    })
+    .then((order) => {
+      return order.addProducts(
+        productsInCart.map((product) => {
+          product.orderItem = { quantity: product.cartItem.quantity };
+          return product;
+        })
+      );
+    })
+    .then(() => {
+      res.redirect("/orders");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
 const getOrders = (req, res, next) => {
   res.render("shop/orders", {
     pageTitle: "Your Orders",
@@ -135,6 +162,7 @@ module.exports = {
   getCart,
   postCart,
   deleteCart,
+  postOrder,
   getOrders,
   getCheckout,
 };
