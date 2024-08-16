@@ -147,10 +147,18 @@ const postOrder = (req, res, next) => {
 };
 
 const getOrders = (req, res, next) => {
-  res.render("shop/orders", {
-    pageTitle: "Your Orders",
-    path: "/orders",
-  });
+  req.user
+    .getOrders({ include: ["products"] })
+    .then((orders) => {
+      res.render("shop/orders", {
+        pageTitle: "Your Orders",
+        path: "/orders",
+        orders,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 const getCheckout = (req, res, next) => {
