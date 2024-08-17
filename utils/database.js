@@ -18,7 +18,6 @@ const mongoConnect = (cb) => {
     .connect()
     .then(() => {
       _db = client.db();
-
       cb();
     })
     .catch((err) => {
