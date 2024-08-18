@@ -60,24 +60,27 @@ const getEditProducts = (req, res, next) => {
     });
 };
 
-// const postEditProduct = (req, res, next) => {
-//   Product.findByPk(req.body.id)
-//     .then((product) => {
-//       product.title = req.body.title;
-//       product.price = req.body.price;
-//       product.imageUrl = req.body.imageUrl;
-//       product.description = req.body.description;
+const postEditProduct = (req, res, next) => {
+  const productData = {
+    title: req.body.title,
+    price: req.body.price,
+    imageUrl: req.body.imageUrl,
+    description: req.body.description,
+  };
 
-//       return product.save();
-//     })
-//     .then(() => {
-//       console.log("Product updated successfully");
-//       res.redirect("/admin/products");
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// };
+  Product.update(req.body.id, productData)
+    .then((result) => {
+      if (result.modifiedCount > 0) {
+        console.log("Product updated successfully");
+        return res.redirect("/admin/products");
+      }
+
+      return res.redirect("/");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
 // const postDeleteProduct = (req, res, next) => {
 //   Product.findByPk(req.body.id)
@@ -98,6 +101,6 @@ module.exports = {
   getAddProducts,
   postAddProducts,
   getEditProducts,
-  // postEditProduct,
+  postEditProduct,
   // postDeleteProduct,
 };

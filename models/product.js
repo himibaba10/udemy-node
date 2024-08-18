@@ -23,6 +23,13 @@ class Product {
     const db = getDB();
     return db.collection("products").findOne({ _id: new ObjectId(id) });
   }
+
+  static update(id, data) {
+    const db = getDB();
+    return db
+      .collection("products")
+      .updateOne({ _id: new ObjectId(id) }, { $set: data });
+  }
 }
 
 module.exports = Product;
