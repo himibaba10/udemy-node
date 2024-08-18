@@ -42,25 +42,23 @@ const postAddProducts = (req, res, next) => {
     });
 };
 
-// const getEditProducts = (req, res, next) => {
-//   req.user
-//     .getProducts({ where: { id: req.params.productId } })
-//     .then((products) => {
-//       const product = products[0];
-//       if (!product) {
-//         return res.redirect("/");
-//       }
-//       res.render("admin/edit-product", {
-//         pageTitle: "Edit Product",
-//         path: "/admin/edit-product",
-//         product,
-//         editing: true,
-//       });
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// };
+const getEditProducts = (req, res, next) => {
+  Product.findById(req.params.productId)
+    .then((product) => {
+      if (!product) {
+        return res.redirect("/");
+      }
+      res.render("admin/edit-product", {
+        pageTitle: "Edit Product",
+        path: "/admin/edit-product",
+        product,
+        editing: true,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
 // const postEditProduct = (req, res, next) => {
 //   Product.findByPk(req.body.id)
@@ -99,7 +97,7 @@ module.exports = {
   getProducts,
   getAddProducts,
   postAddProducts,
-  // getEditProducts,
+  getEditProducts,
   // postEditProduct,
   // postDeleteProduct,
 };
