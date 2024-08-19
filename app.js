@@ -13,9 +13,21 @@ const shopRoutes = require("./routes/shop");
 
 const { getError } = require("./controllers/error");
 const { mongoConnect } = require("./utils/database");
+const User = require("./models/user");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+
+app.use((req, res, next) => {
+  User.findById("66c324fc0ba52df2b0303928")
+    .then((user) => {
+      req.user = user;
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);

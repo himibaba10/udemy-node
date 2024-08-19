@@ -12,7 +12,7 @@ class User {
     return db.collection("users").insertOne(this);
   }
 
-  findById(userId) {
+  static findById(userId) {
     const db = getDB();
     return db.collection("users").findOne({ _id: new ObjectId(userId) });
   }
