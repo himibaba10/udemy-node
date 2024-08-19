@@ -28,7 +28,8 @@ const postAddProducts = (req, res, next) => {
     req.body.title,
     req.body.price,
     req.body.imageUrl,
-    req.body.description
+    req.body.description,
+    req.user._id
   );
 
   product
