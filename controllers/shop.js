@@ -105,23 +105,17 @@ const postCart = (req, res, next) => {
   //   });
 };
 
-// const deleteCart = (req, res, next) => {
-//   const { productId } = req.body;
-//   req.user
-//     .getCart()
-//     .then((cart) => {
-//       return cart.getProducts({ where: { id: productId } });
-//     })
-//     .then(([product]) => {
-//       return product.cartItem.destroy();
-//     })
-//     .then(() => {
-//       res.redirect("/cart");
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// };
+const deleteCart = (req, res, next) => {
+  const { productId } = req.body;
+  req.user
+    .deleteCart(productId)
+    .then((result) => {
+      res.redirect("/cart");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
 // const postOrder = (req, res, next) => {
 //   let productsInCart;
@@ -183,7 +177,7 @@ module.exports = {
   getIndex,
   getCart,
   postCart,
-  // deleteCart,
+  deleteCart,
   // postOrder,
   // getOrders,
   // getCheckout,
