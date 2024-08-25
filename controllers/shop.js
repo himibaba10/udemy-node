@@ -42,22 +42,20 @@ const getIndex = (req, res, next) => {
     });
 };
 
-// const getCart = (req, res, next) => {
-//   req.user
-//     .getCart()
-//     .then((cart) => {
-//       return cart.getProducts().then((products) => {
-//         res.render("shop/cart", {
-//           products: products,
-//           pageTitle: "Cart",
-//           path: "/cart",
-//         });
-//       });
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// };
+const getCart = (req, res, next) => {
+  req.user
+    .getCart()
+    .then((products) => {
+      res.render("shop/cart", {
+        products: products,
+        pageTitle: "Cart",
+        path: "/cart",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
 const postCart = (req, res, next) => {
   const { productId } = req.body;
@@ -67,7 +65,7 @@ const postCart = (req, res, next) => {
       return req.user.addToCart(product);
     })
     .then((result) => {
-      res.redirect("/");
+      res.redirect("/cart");
     })
     .catch((err) => {
       console.log(err);
@@ -183,7 +181,7 @@ module.exports = {
   getProducts,
   getProduct,
   getIndex,
-  // getCart,
+  getCart,
   postCart,
   // deleteCart,
   // postOrder,

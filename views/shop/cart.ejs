@@ -9,7 +9,7 @@
                         <% for(const product of products) { %>
                             <li style="display: flex; align-items: center; gap: 10px">
                                 <p>
-                                    <%= product.title%> - (<%= product.cartItem.quantity %>)
+                                    <%= product.title%> - (<%= product.quantity %>)
                                 </p>
                                 <form action="/delete-cart-product" method="POST">
                                     <input type="hidden" name="productId" value="<%= product._id %>">
