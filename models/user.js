@@ -97,6 +97,34 @@ class User {
     );
   }
 
+  addOrder() {
+    const db = getDB();
+    const order = db.collection("order");
+
+    return this.getCart().then((products) => {
+      const orderItem = {
+        items: products,
+        user: {
+          userId: new ObjectId(this._id),
+          name: this.name,
+        },
+      };
+
+      return order.insertOne(orderItem).then((result) => {
+        this.cart = { items: [] };
+
+        return db.collection("users").updateOne(
+          { _id: new ObjectId(this._id) },
+          {
+            $set: {
+              cart: { items: [] },
+            },
+          }
+        );
+      });
+    });
+  }
+
   static findById(userId) {
     const db = getDB();
     return db.collection("users").findOne({ _id: new ObjectId(userId) });

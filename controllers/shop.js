@@ -117,37 +117,16 @@ const deleteCart = (req, res, next) => {
     });
 };
 
-// const postOrder = (req, res, next) => {
-//   let productsInCart;
-//   let fetchedCart;
-//   req.user
-//     .getCart()
-//     .then((cart) => {
-//       fetchedCart = cart;
-//       return cart.getProducts();
-//     })
-//     .then((products) => {
-//       productsInCart = products;
-//       return req.user.createOrder();
-//     })
-//     .then((order) => {
-//       return order.addProducts(
-//         productsInCart.map((product) => {
-//           product.orderItem = { quantity: product.cartItem.quantity };
-//           return product;
-//         })
-//       );
-//     })
-//     .then(() => {
-//       fetchedCart.setProducts(null);
-//     })
-//     .then(() => {
-//       res.redirect("/orders");
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// };
+const postOrder = (req, res, next) => {
+  req.user
+    .addOrder()
+    .then(() => {
+      res.redirect("/orders");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
 // const getOrders = (req, res, next) => {
 //   req.user
@@ -178,7 +157,7 @@ module.exports = {
   getCart,
   postCart,
   deleteCart,
-  // postOrder,
+  postOrder,
   // getOrders,
   // getCheckout,
 };
