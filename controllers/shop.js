@@ -128,20 +128,20 @@ const postOrder = (req, res, next) => {
     });
 };
 
-// const getOrders = (req, res, next) => {
-//   req.user
-//     .getOrders({ include: ["products"] })
-//     .then((orders) => {
-//       res.render("shop/orders", {
-//         pageTitle: "Your Orders",
-//         path: "/orders",
-//         orders,
-//       });
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// };
+const getOrders = (req, res, next) => {
+  req.user
+    .getOrders()
+    .then((orders) => {
+      res.render("shop/orders", {
+        pageTitle: "Your Orders",
+        path: "/orders",
+        orders: orders,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
 // const getCheckout = (req, res, next) => {
 //   res.render("shop/checkout", {
@@ -158,6 +158,6 @@ module.exports = {
   postCart,
   deleteCart,
   postOrder,
-  // getOrders,
+  getOrders,
   // getCheckout,
 };
