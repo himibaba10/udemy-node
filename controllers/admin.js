@@ -24,13 +24,12 @@ const getAddProducts = (req, res, next) => {
 };
 
 const postAddProducts = (req, res, next) => {
-  const product = new Product(
-    req.body.title,
-    req.body.price,
-    req.body.imageUrl,
-    req.body.description,
-    req.user._id
-  );
+  const product = new Product({
+    title: req.body.title,
+    price: req.body.price,
+    imageUrl: req.body.imageUrl,
+    description: req.body.description,
+  });
 
   product
     .save()
