@@ -1,7 +1,7 @@
 const Product = require("../models/product");
 
 const getProducts = (req, res, next) => {
-  Product.findAll()
+  Product.find()
     .then((products) => {
       res.render("admin/products", {
         prods: products,
@@ -68,12 +68,10 @@ const postEditProduct = (req, res, next) => {
     description: req.body.description,
   };
 
-  Product.update(req.body.id, productData)
+  Product.findByIdAndUpdate(req.body.id, productData)
     .then((result) => {
-      if (result.modifiedCount > 0) {
-        console.log("Product updated successfully");
-        return res.redirect("/admin/products");
-      }
+      console.log("Product updated successfully");
+      return res.redirect("/admin/products");
 
       return res.redirect("/");
     })
