@@ -72,8 +72,6 @@ const postEditProduct = (req, res, next) => {
     .then((result) => {
       console.log("Product updated successfully");
       return res.redirect("/admin/products");
-
-      return res.redirect("/");
     })
     .catch((err) => {
       console.log(err);
@@ -81,14 +79,10 @@ const postEditProduct = (req, res, next) => {
 };
 
 const postDeleteProduct = (req, res, next) => {
-  Product.delete(req.body.id)
+  Product.findByIdAndDelete(req.body.id)
     .then((result) => {
-      if (result.deletedCount > 0) {
-        console.log("Product deleted successfully");
-        return res.redirect("/admin/products");
-      }
-
-      return res.redirect("/");
+      console.log("Product deleted successfully");
+      return res.redirect("/admin/products");
     })
     .catch((err) => {
       console.log(err);
