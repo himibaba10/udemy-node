@@ -42,7 +42,20 @@ userSchema.methods.addToCart = function (product) {
   const updatedCart = { items: updatedCartItems };
 
   this.cart = updatedCart;
-  this.save();
+  return this.save();
+};
+
+userSchema.methods.deleteCart = function (productId) {
+  const cart = [...this.cart.items];
+
+  const updatedCartItems = cart.filter(
+    (cartProduct) => cartProduct.productId.toString() !== productId.toString()
+  );
+
+  const udpatedCart = { items: updatedCartItems };
+
+  this.cart = udpatedCart;
+  return this.save();
 };
 
 const User = model("User", userSchema);
