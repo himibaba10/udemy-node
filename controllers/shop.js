@@ -45,7 +45,12 @@ const getIndex = (req, res, next) => {
 const getCart = (req, res, next) => {
   req.user
     .getCart()
-    .then((products) => {
+    .then((user) => {
+      const products = user.cart.items.map((product) => ({
+        _id: product.productId._id,
+        title: product.productId.title,
+        quantity: product.quantity,
+      }));
       res.render("shop/cart", {
         products: products,
         pageTitle: "Cart",
@@ -70,39 +75,6 @@ const postCart = (req, res, next) => {
     .catch((err) => {
       console.log(err);
     });
-
-  // let fetchedCart;
-  // let productQuantity = 1;
-  // req.user
-  //   .getCart()
-  //   .then((cart) => {
-  //     fetchedCart = cart;
-  //     return cart.getProducts({ where: { id: productId } });
-  //   })
-  //   .then((products) => {
-  //     let product;
-  //     if (products.length) {
-  //       product = products[0];
-  //     }
-
-  //     if (product) {
-  //       productQuantity = product.cartItem.quantity + 1;
-  //       return product;
-  //     }
-
-  //     return Product.findByPk(productId);
-  //   })
-  //   .then((product) => {
-  //     return fetchedCart.addProduct(product, {
-  //       through: { quantity: productQuantity },
-  //     });
-  //   })
-  //   .then(() => {
-  //     res.redirect("/cart");
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
 };
 
 const deleteCart = (req, res, next) => {
