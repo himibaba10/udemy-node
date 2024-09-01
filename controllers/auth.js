@@ -1,5 +1,8 @@
 const getLogin = (req, res, next) => {
-  res.send("<h1>Hello from the admin route!</h1>");
+  res.render("auth/login", {
+    path: "/login",
+    pageTitle: "Login",
+  });
 };
 
 module.exports = {
