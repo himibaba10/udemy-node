@@ -1,5 +1,4 @@
 const getLogin = (req, res, next) => {
-  const isLoggedIn = Boolean(req.get("Cookie").split("=")[1]);
   res.render("auth/login", {
     path: "/login",
     pageTitle: "Login",
@@ -7,7 +6,12 @@ const getLogin = (req, res, next) => {
 };
 
 const postLogin = (req, res, next) => {
-  res.setHeader("Set-Cookie", "loggedIn=true");
+  // To set cookies:
+  // res.setHeader("Set-Cookie", "loggedIn=true");
+
+  // To set session:
+  req.session.isLoggedIn = true;
+
   res.redirect("/");
 };
 
