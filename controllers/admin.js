@@ -7,6 +7,7 @@ const getProducts = (req, res, next) => {
         prods: products,
         pageTitle: "Products",
         path: "/admin/products",
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {
@@ -20,6 +21,7 @@ const getAddProducts = (req, res, next) => {
     path: "/admin/add-product",
     editing: false,
     product: null,
+    isAuthenticated: req.session.isLoggedIn,
   });
 };
 
@@ -29,7 +31,7 @@ const postAddProducts = (req, res, next) => {
     price: req.body.price,
     imageUrl: req.body.imageUrl,
     description: req.body.description,
-    userId: req.user._id,
+    userId: req.session.user._id,
   });
 
   product
@@ -54,6 +56,7 @@ const getEditProducts = (req, res, next) => {
         path: "/admin/edit-product",
         product,
         editing: true,
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {
