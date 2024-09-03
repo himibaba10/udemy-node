@@ -47,9 +47,14 @@ form {
   padding: 0;
 }
 
-.main-header__item a {
+.main-header__item a,
+.main-header__item button {
   text-decoration: none;
   color: white;
+  background-color: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
 }
 
 .main-header__item a:hover,
