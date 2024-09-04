@@ -19,7 +19,6 @@ const postLogin = (req, res, next) => {
     .then((user) => {
       req.session.isLoggedIn = true;
       req.session.user = user;
-      console.log(user.getCart, req.session.user.getCart);
       res.redirect("/");
     })
     .catch((err) => {

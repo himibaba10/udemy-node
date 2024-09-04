@@ -47,8 +47,7 @@ const getIndex = (req, res, next) => {
 };
 
 const getCart = (req, res, next) => {
-  console.log(req.session.user.getCart);
-  req.session.user
+  req.user
     .getCart()
     .then((user) => {
       const products = user.cart.items.map((product) => ({
@@ -73,7 +72,7 @@ const postCart = (req, res, next) => {
 
   Product.findById(productId)
     .then((product) => {
-      return req.session.user.addToCart(product);
+      return req.user.addToCart(product);
     })
     .then((result) => {
       res.redirect("/cart");
@@ -85,7 +84,7 @@ const postCart = (req, res, next) => {
 
 const deleteCart = (req, res, next) => {
   const { productId } = req.body;
-  req.session.user
+  req.user
     .deleteCart(productId)
     .then((result) => {
       res.redirect("/cart");
@@ -96,7 +95,7 @@ const deleteCart = (req, res, next) => {
 };
 
 const postOrder = (req, res, next) => {
-  req.session.user
+  req.user
     .getCart()
     .then((user) => {
       const products = user.cart.items.map((product) => ({
@@ -120,7 +119,7 @@ const postOrder = (req, res, next) => {
       });
     })
     .then((result) => {
-      return req.session.user.clearCart();
+      return req.user.clearCart();
     })
     .then(() => {
       res.redirect("/orders");
