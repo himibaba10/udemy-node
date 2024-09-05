@@ -52,18 +52,13 @@ app.use(authRoutes);
 
 app.use(getError);
 
-mongoose.connect(MONGODB_URI).then((result) => {
-  User.findOne().then((user) => {
-    if (!user) {
-      const newUser = new User({
-        name: "Ferdous Ahmed",
-        email: "himibaba10@gmail.com",
-        cart: { items: [] },
-      });
-      return newUser.save();
-    }
+mongoose
+  .connect(MONGODB_URI)
+  .then((result) => {
+    app.listen(3000, () => {
+      console.log("App is running on port 3000 and connected to Mongoose");
+    });
+  })
+  .catch((err) => {
+    console.log(err);
   });
-  app.listen(3000, () => {
-    console.log("App is running on port 3000 and connected to Mongoose");
-  });
-});
