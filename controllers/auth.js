@@ -47,20 +47,35 @@ const postLogin = (req, res, next) => {
   // To set session:
   // req.session.isLoggedIn = true;
 
-  User.findById("66d1a20cda701462bae81c4f")
+  const email = req.body.email;
+  const password = req.body.password;
+
+  User.findOne({ email })
     .then((user) => {
-      req.session.isLoggedIn = true;
-      req.session.user = user;
-      req.session.save((err) => {
-        if (err) {
-          console.log(err);
-        }
-        res.redirect("/");
-      });
+      if (!user) {
+        console.log("Invalid email");
+        return res.redirect("/login");
+      }
+
+      bcrypt
+        .compare(password, user.password)
+        .then((doMatch) => {
+          if (doMatch) {
+            req.session.isLoggedIn = true;
+            req.session.user = user;
+            req.session.save((err) => {
+              if (err) console.log(err);
+              console.log("Login successful");
+              res.redirect("/");
+            });
+          } else {
+            console.log("Incorrect password");
+            res.redirect("/login");
+          }
+        })
+        .catch((err) => console.log(err));
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => console.log(err));
 };
 
 const postLogout = (req, res, next) => {
