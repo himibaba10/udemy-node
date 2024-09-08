@@ -74,6 +74,7 @@ const postLogin = (req, res, next) => {
               res.redirect("/");
             });
           } else {
+            req.flash("error", "Invalid password");
             console.log("Incorrect password");
             res.redirect("/login");
           }
