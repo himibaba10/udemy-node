@@ -37,7 +37,7 @@ const getLogin = (req, res, next) => {
     path: "/login",
     pageTitle: "Login",
     isAuthenticated: req.session.isLoggedIn,
-    errorMessage: req.flash("error"),
+    errorMessage: req.flash("error")[0],
   });
 };
 
