@@ -37,6 +37,7 @@ const getLogin = (req, res, next) => {
     path: "/login",
     pageTitle: "Login",
     isAuthenticated: req.session.isLoggedIn,
+    errorMessage: req.flash("error"),
   });
 };
 
@@ -53,7 +54,7 @@ const postLogin = (req, res, next) => {
   User.findOne({ email })
     .then((user) => {
       if (!user) {
-        console.log("Invalid email");
+        req.flash("error", "Invalid email");
         return res.redirect("/login");
       }
 

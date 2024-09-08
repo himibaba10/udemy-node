@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
+const flash = require("connect-flash");
 const Token = require("csrf");
 const token = new Token();
 
@@ -36,6 +37,7 @@ app.use(
     store,
   })
 );
+app.use(flash());
 
 app.use((req, res, next) => {
   if (req.session.user) {
