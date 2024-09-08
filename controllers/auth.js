@@ -6,6 +6,7 @@ const getSignup = (req, res, next) => {
     path: "/signup",
     pageTitle: "Signup",
     isAuthenticated: false,
+    errorMessage: req.flash("error")[0],
   });
 };
 
@@ -15,17 +16,20 @@ const postSignup = (req, res, next) => {
   User.findOne({ email })
     .then((user) => {
       if (user) {
+        req.flash("error", "This email is already registered");
         return res.redirect("/signup");
       }
 
-      return bcrypt.hash(password, 12).then((hashedPassword) => {
-        const newUser = new User({ email, password: hashedPassword });
-        return newUser.save();
-      });
-    })
-    .then((result) => {
-      console.log("User created");
-      res.redirect("/login");
+      return bcrypt
+        .hash(password, 12)
+        .then((hashedPassword) => {
+          const newUser = new User({ email, password: hashedPassword });
+          return newUser.save();
+        })
+        .then(() => {
+          console.log("User created");
+          res.redirect("/login");
+        });
     })
     .catch((err) => {
       console.log(err);
