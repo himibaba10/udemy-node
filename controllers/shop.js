@@ -38,7 +38,6 @@ const getIndex = (req, res, next) => {
         prods: products,
         pageTitle: "Shop",
         path: "/",
-        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {
@@ -113,7 +112,7 @@ const postOrder = (req, res, next) => {
       return Order.create({
         products,
         user: {
-          name: req.session.user.name,
+          email: req.session.user.email,
           userId: req.session.user._id,
         },
       });

@@ -4,6 +4,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
+const Token = require("csrf");
+const token = new Token();
 
 const app = express();
 
@@ -44,6 +46,18 @@ app.use((req, res, next) => {
   } else {
     next();
   }
+});
+
+app.use((req, res, next) => {
+  token.secret((err, secret) => {
+    if (err) console.log(err);
+
+    const csrfToken = token.create(secret);
+
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = csrfToken;
+    next();
+  });
 });
 
 app.use("/admin", adminRoutes);
