@@ -109,10 +109,20 @@ const postLogout = (req, res, next) => {
   });
 };
 
+const getResetPassword = (req, res, next) => {
+  res.render("auth/reset", {
+    path: "/reset",
+    pageTitle: "Reset Password",
+    isAuthenticated: req.session.isLoggedIn,
+    errorMessage: req.flash("error")[0],
+  });
+};
+
 module.exports = {
   getSignup,
   postSignup,
   getLogin,
   postLogin,
   postLogout,
+  getResetPassword,
 };
