@@ -1,5 +1,14 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const nodemailer = require("nodemailer");
+const transporter = nodemailer.createTransport({
+  host: "smtp.ethereal.email",
+  port: 587,
+  auth: {
+    user: "jessyca.smith12@ethereal.email",
+    pass: "9HB9a3CPWbWbX3aysM",
+  },
+});
 
 const getSignup = (req, res, next) => {
   res.render("auth/signup", {
@@ -26,7 +35,14 @@ const postSignup = (req, res, next) => {
           const newUser = new User({ email, password: hashedPassword });
           return newUser.save();
         })
-        .then(() => {
+        .then((result) => {
+          transporter.sendMail({
+            from: '"You are signed up successfully 👻" <nodeshop@gmail.com>', // sender address
+            to: result.email, // list of receivers
+            subject: "Sign Up successfull", // Subject line
+            text: "You are now Signed Up!", // plain text body
+            html: "<b>You are now Signed Up!</b>", // html body
+          });
           console.log("User created");
           res.redirect("/login");
         });
@@ -68,7 +84,7 @@ const postLogin = (req, res, next) => {
           if (doMatch) {
             req.session.isLoggedIn = true;
             req.session.user = user;
-            req.session.save((err) => {
+            req.session.save(async (err) => {
               if (err) console.log(err);
               console.log("Login successful");
               res.redirect("/");
