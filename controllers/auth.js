@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
@@ -118,6 +119,42 @@ const getResetPassword = (req, res, next) => {
   });
 };
 
+const postResetPassword = (req, res, next) => {
+  crypto.randomBytes(32, (err, buffer) => {
+    if (err) {
+      console.log(err);
+      res.redirect("/reset");
+    }
+    const token = buffer.toString("hex");
+    User.findOne({ email: req.body.email })
+      .then((user) => {
+        if (!user) {
+          req.flash("error", "No account found with this email");
+          return res.redirect("/reset");
+        }
+        user.resetToken = token;
+        user.resetTokenExpiration = Date.now() + 3600000; // 1 hour
+        return user.save();
+      })
+      .then(() => {
+        return transporter.sendMail({
+          from: "Reset password link <nodeshop@gmail.com>", // sender address
+          to: req.body.email, // list of receivers
+          subject: "Reset Node Shop Password", // Subject line
+          html: `
+          <p>Your reset password link is below:</p>
+          <a href='http:localhost:3000/reset/${token}'>Click here to reset the password</a>
+          `, // html body
+        });
+      })
+      .then(() => {
+        console.log("Reset password email sent");
+        res.redirect("/");
+      })
+      .catch((err) => console.log(err));
+  });
+};
+
 module.exports = {
   getSignup,
   postSignup,
@@ -125,4 +162,5 @@ module.exports = {
   postLogin,
   postLogout,
   getResetPassword,
+  postResetPassword,
 };
