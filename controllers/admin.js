@@ -1,7 +1,7 @@
 const Product = require("../models/product");
 
 const getProducts = (req, res, next) => {
-  Product.find()
+  Product.find({ userId: req.user._id })
     .then((products) => {
       res.render("admin/products", {
         prods: products,
@@ -51,6 +51,9 @@ const getEditProducts = (req, res, next) => {
       if (!product) {
         return res.redirect("/");
       }
+      if (product.userId.toString() !== req.user._id.toString()) {
+        return res.redirect("/");
+      }
       res.render("admin/edit-product", {
         pageTitle: "Edit Product",
         path: "/admin/edit-product",
@@ -83,7 +86,7 @@ const postEditProduct = (req, res, next) => {
 };
 
 const postDeleteProduct = (req, res, next) => {
-  Product.findByIdAndDelete(req.body.id)
+  Product.findOneAndDelete({ _id: req.body.id, userId: req.user._id })
     .then((result) => {
       console.log("Product deleted successfully");
       return res.redirect("/admin/products");
