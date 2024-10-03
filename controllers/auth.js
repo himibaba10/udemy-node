@@ -123,7 +123,7 @@ const postResetPassword = (req, res, next) => {
   crypto.randomBytes(32, (err, buffer) => {
     if (err) {
       console.log(err);
-      res.redirect("/reset");
+      return res.redirect("/reset");
     }
     const token = buffer.toString("hex");
     User.findOne({ email: req.body.email })
@@ -149,7 +149,7 @@ const postResetPassword = (req, res, next) => {
       })
       .then(() => {
         console.log("Reset password email sent");
-        res.redirect("/");
+        return res.redirect("/");
       })
       .catch((err) => console.log(err));
   });
