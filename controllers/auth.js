@@ -174,6 +174,34 @@ const getNewPassword = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
+const postNewPassword = (req, res, next) => {
+  User.findOne({
+    _id: req.body.userId,
+    resetToken: req.body.token,
+    resetTokenExpiration: { $gt: Date.now() },
+  })
+    .then((user) => {
+      if (!user) {
+        req.flash("error", "No user found with this ID");
+        return res.redirect("/");
+      }
+      return bcrypt
+        .hash(req.body.password, 12)
+        .then((hashedPassword) => {
+          user.password = hashedPassword;
+          user.resetToken = undefined;
+          user.resetTokenExpiration = undefined;
+          return user.save();
+        })
+        .then(() => {
+          console.log("Password reset successful");
+          res.redirect("/login");
+        })
+        .catch((err) => console.log(err));
+    })
+    .catch((err) => console.log(err));
+};
+
 module.exports = {
   getSignup,
   postSignup,
@@ -183,4 +211,5 @@ module.exports = {
   getResetPassword,
   postResetPassword,
   getNewPassword,
+  postNewPassword,
 };
