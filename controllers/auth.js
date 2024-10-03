@@ -155,6 +155,25 @@ const postResetPassword = (req, res, next) => {
   });
 };
 
+const getNewPassword = (req, res, next) => {
+  const token = req.params.token;
+  User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
+    .then((user) => {
+      if (!user) {
+        req.flash("error", "Reset token is invalid or expired");
+        return res.redirect("/reset");
+      }
+      res.render("auth/new-password", {
+        path: "/new-password",
+        pageTitle: "Reset Password",
+        errorMessage: req.flash("error")[0],
+        userId: user._id.toString(),
+        token,
+      });
+    })
+    .catch((err) => console.log(err));
+};
+
 module.exports = {
   getSignup,
   postSignup,
@@ -163,4 +182,5 @@ module.exports = {
   postLogout,
   getResetPassword,
   postResetPassword,
+  getNewPassword,
 };
