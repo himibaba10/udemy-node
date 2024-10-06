@@ -2,6 +2,7 @@ const crypto = require("crypto");
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
+const { validationResult } = require("express-validator");
 const transporter = nodemailer.createTransport({
   host: "smtp.ethereal.email",
   port: 587,
@@ -22,6 +23,17 @@ const getSignup = (req, res, next) => {
 
 const postSignup = (req, res, next) => {
   const { email, password } = req.body;
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).render("auth/signup", {
+      path: "/signup",
+      pageTitle: "Signup",
+      isAuthenticated: false,
+      errorMessage: errors.array()[0].msg,
+    });
+  }
 
   User.findOne({ email })
     .then((user) => {
