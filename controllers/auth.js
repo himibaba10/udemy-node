@@ -27,11 +27,16 @@ const postSignup = (req, res, next) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
+    console.log(errors.array());
+    const errorMessage = errors
+      .array()
+      .map((err) => err.msg)
+      .join("; ");
     return res.status(422).render("auth/signup", {
       path: "/signup",
       pageTitle: "Signup",
       isAuthenticated: false,
-      errorMessage: errors.array()[0].msg,
+      errorMessage: errorMessage,
     });
   }
 

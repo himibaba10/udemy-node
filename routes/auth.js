@@ -21,7 +21,13 @@ router.get("/reset/:token", getNewPassword);
 
 router.post(
   "/signup",
-  check("email").isEmail().withMessage("Please enter a valid email"),
+  [
+    check("email").isEmail().withMessage("Please enter a valid email"),
+    check("password")
+      .isLength({ min: 6, max: undefined })
+      .isAlphanumeric()
+      .withMessage("Password must be at least 6 characters"),
+  ],
   postSignup
 );
 router.post("/login", postLogin);
