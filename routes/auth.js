@@ -1,5 +1,5 @@
 const express = require("express");
-const { check } = require("express-validator");
+const { check, body } = require("express-validator");
 const {
   getLogin,
   postLogin,
@@ -23,10 +23,15 @@ router.post(
   "/signup",
   [
     check("email").isEmail().withMessage("Please enter a valid email"),
-    check("password")
+    check("password", "Password must be at least 6 characters and alphanumeric")
       .isLength({ min: 6, max: undefined })
-      .isAlphanumeric()
-      .withMessage("Password must be at least 6 characters"),
+      .isAlphanumeric(),
+    body("confirmPassword").custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error("Passwords do not match!");
+      }
+      return true;
+    }),
   ],
   postSignup
 );
