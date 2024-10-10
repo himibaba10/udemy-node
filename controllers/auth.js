@@ -18,17 +18,19 @@ const getSignup = (req, res, next) => {
     pageTitle: "Signup",
     isAuthenticated: false,
     errorMessage: req.flash("error")[0],
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
 };
 
 const postSignup = (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password, confirmPassword } = req.body;
 
   const errors = validationResult(req);
 
   // If there is any error
   if (!errors.isEmpty()) {
-    console.log(errors.array());
     const errorMessage = errors
       .array()
       .map((err) => err.msg)
@@ -38,15 +40,12 @@ const postSignup = (req, res, next) => {
       pageTitle: "Signup",
       isAuthenticated: false,
       errorMessage: errorMessage,
+      email,
+      password,
+      confirmPassword,
     });
   }
 
-  User.findOne({ email }).then((user) => {
-    if (user) {
-      req.flash("error", "This email is already registered");
-      return res.redirect("/signup");
-    }
-  });
   return bcrypt
     .hash(password, 12)
     .then((hashedPassword) => {
