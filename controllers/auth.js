@@ -26,6 +26,7 @@ const postSignup = (req, res, next) => {
 
   const errors = validationResult(req);
 
+  // If there is any error
   if (!errors.isEmpty()) {
     console.log(errors.array());
     const errorMessage = errors
@@ -40,30 +41,28 @@ const postSignup = (req, res, next) => {
     });
   }
 
-  User.findOne({ email })
-    .then((user) => {
-      if (user) {
-        req.flash("error", "This email is already registered");
-        return res.redirect("/signup");
-      }
-
-      return bcrypt
-        .hash(password, 12)
-        .then((hashedPassword) => {
-          const newUser = new User({ email, password: hashedPassword });
-          return newUser.save();
-        })
-        .then((result) => {
-          transporter.sendMail({
-            from: '"You are signed up successfully 👻" <nodeshop@gmail.com>', // sender address
-            to: result.email, // list of receivers
-            subject: "Sign Up successfull", // Subject line
-            text: "You are now Signed Up!", // plain text body
-            html: "<b>You are now Signed Up!</b>", // html body
-          });
-          console.log("User created");
-          res.redirect("/login");
-        });
+  User.findOne({ email }).then((user) => {
+    if (user) {
+      req.flash("error", "This email is already registered");
+      return res.redirect("/signup");
+    }
+  });
+  return bcrypt
+    .hash(password, 12)
+    .then((hashedPassword) => {
+      const newUser = new User({ email, password: hashedPassword });
+      return newUser.save();
+    })
+    .then((result) => {
+      transporter.sendMail({
+        from: '"You are signed up successfully 👻" <nodeshop@gmail.com>', // sender address
+        to: result.email, // list of receivers
+        subject: "Sign Up successfull", // Subject line
+        text: "You are now Signed Up!", // plain text body
+        html: "<b>You are now Signed Up!</b>", // html body
+      });
+      console.log("User created");
+      res.redirect("/login");
     })
     .catch((err) => {
       console.log(err);

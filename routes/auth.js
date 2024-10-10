@@ -11,6 +11,7 @@ const {
   getNewPassword,
   postNewPassword,
 } = require("../controllers/auth");
+const User = require("../models/user");
 
 const router = express.Router();
 
@@ -22,7 +23,15 @@ router.get("/reset/:token", getNewPassword);
 router.post(
   "/signup",
   [
-    check("email").isEmail().withMessage("Please enter a valid email"),
+    check("email")
+      .isEmail()
+      .withMessage("Please enter a valid email")
+      .custom(async (value) => {
+        const user = await User.findOne({ email: value });
+        if (user) {
+          return Promise.reject("Email already exists, pick a different one.");
+        }
+      }),
     check("password", "Password must be at least 6 characters and alphanumeric")
       .isLength({ min: 6, max: undefined })
       .isAlphanumeric(),
