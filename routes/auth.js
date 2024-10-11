@@ -44,7 +44,24 @@ router.post(
   ],
   postSignup
 );
-router.post("/login", postLogin);
+router.post(
+  "/login",
+  [
+    body("email")
+      .isEmail()
+      .withMessage("Not an email")
+      .custom(async (value, { req }) => {
+        const user = await User.findOne({ email: value });
+        if (!user) {
+          throw new Error("Invalid email or password");
+        }
+        req.user = user;
+        return true;
+      }),
+    body("password").notEmpty().withMessage("Password field is required"),
+  ],
+  postLogin
+);
 router.post("/logout", postLogout);
 router.post("/reset", postResetPassword);
 router.post("/new-password", postNewPassword);

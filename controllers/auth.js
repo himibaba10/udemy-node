@@ -87,44 +87,70 @@ const getLogin = (req, res, next) => {
     pageTitle: "Login",
     isAuthenticated: req.session.isLoggedIn,
     errorMessage: req.flash("error")[0],
+    email: "",
+    password: "",
+    validationErrors: {
+      emailError: "",
+      passwordError: "",
+    },
   });
 };
 
 const postLogin = (req, res, next) => {
-  // To set cookies:
-  // res.setHeader("Set-Cookie", "loggedIn=true");
-
-  // To set session:
-  // req.session.isLoggedIn = true;
-
   const email = req.body.email;
   const password = req.body.password;
 
-  User.findOne({ email })
-    .then((user) => {
-      if (!user) {
-        req.flash("error", "Invalid email");
-        return res.redirect("/login");
-      }
+  const errors = validationResult(req);
 
-      bcrypt
-        .compare(password, user.password)
-        .then((doMatch) => {
-          if (doMatch) {
-            req.session.isLoggedIn = true;
-            req.session.user = user;
-            req.session.save(async (err) => {
-              if (err) console.log(err);
-              console.log("Login successful");
-              res.redirect("/");
-            });
-          } else {
-            req.flash("error", "Invalid password");
-            console.log("Incorrect password");
-            res.redirect("/login");
-          }
-        })
-        .catch((err) => console.log(err));
+  if (!errors.isEmpty()) {
+    const errorMessage = errors
+      .array()
+      .map((err) => err.msg)
+      .join("; ");
+
+    const emailError = errors.array().some((el) => el.path === "email");
+    const passwordError = errors.array().some((el) => el.path === "password");
+
+    return res.status(422).render("auth/login", {
+      path: "/login",
+      pageTitle: "Login",
+      isAuthenticated: req.session.isLoggedIn,
+      errorMessage: errorMessage,
+      email,
+      password,
+      validationErrors: {
+        emailError: emailError,
+        passwordError: passwordError,
+      },
+    });
+  }
+
+  bcrypt
+    .compare(password, req.user.password)
+    .then((doMatch) => {
+      if (doMatch) {
+        req.session.isLoggedIn = true;
+        req.session.user = req.user;
+        req.session.save(async (err) => {
+          if (err) console.log(err);
+          console.log("Login successful");
+          res.redirect("/");
+        });
+      } else {
+        console.log("Incorrect password");
+        return res.status(422).render("auth/login", {
+          path: "/login",
+          pageTitle: "Login",
+          isAuthenticated: req.session.isLoggedIn,
+          errorMessage: "Invalid email or password",
+          email,
+          password,
+          validationErrors: {
+            emailError: "",
+            passwordError: "",
+          },
+        });
+      }
     })
     .catch((err) => console.log(err));
 };
