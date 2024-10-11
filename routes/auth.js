@@ -31,10 +31,12 @@ router.post(
         if (user) {
           return Promise.reject("Email already exists, pick a different one.");
         }
-      }),
+      })
+      .normalizeEmail(),
     check("password", "Password must be at least 6 characters and alphanumeric")
       .isLength({ min: 6, max: undefined })
-      .isAlphanumeric(),
+      .isAlphanumeric()
+      .trim(),
     body("confirmPassword").custom((value, { req }) => {
       if (value !== req.body.password) {
         throw new Error("Passwords do not match!");
@@ -57,8 +59,12 @@ router.post(
         }
         req.user = user;
         return true;
-      }),
-    body("password").notEmpty().withMessage("Password field is required"),
+      })
+      .normalizeEmail(),
+    body("password")
+      .notEmpty()
+      .withMessage("Password field is required")
+      .trim(),
   ],
   postLogin
 );
