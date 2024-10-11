@@ -21,6 +21,11 @@ const getSignup = (req, res, next) => {
     email: "",
     password: "",
     confirmPassword: "",
+    validationErrors: {
+      emailError: "",
+      passwordError: "",
+      confirmPasswordError: "",
+    },
   });
 };
 
@@ -35,6 +40,13 @@ const postSignup = (req, res, next) => {
       .array()
       .map((err) => err.msg)
       .join("; ");
+
+    const emailError = errors.array().some((el) => el.path === "email");
+    const passwordError = errors.array().some((el) => el.path === "password");
+    const confirmPasswordError = errors
+      .array()
+      .some((el) => el.path === "confirmPassword");
+
     return res.status(422).render("auth/signup", {
       path: "/signup",
       pageTitle: "Signup",
@@ -43,6 +55,7 @@ const postSignup = (req, res, next) => {
       email,
       password,
       confirmPassword,
+      validationErrors: { emailError, passwordError, confirmPasswordError },
     });
   }
 
