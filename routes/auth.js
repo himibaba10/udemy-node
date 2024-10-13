@@ -15,11 +15,13 @@ const User = require("../models/user");
 
 const router = express.Router();
 
+// GET ROUTES
 router.get("/signup", getSignup);
 router.get("/login", getLogin);
 router.get("/reset", getResetPassword);
 router.get("/reset/:token", getNewPassword);
 
+// POST ROUTES
 router.post(
   "/signup",
   [
