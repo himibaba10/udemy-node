@@ -1,5 +1,6 @@
 const { validationResult } = require("express-validator");
 const Product = require("../models/product");
+const handleError = require("../utils/handleError");
 
 const getProducts = (req, res, next) => {
   Product.find({ userId: req.user._id })
@@ -76,9 +77,7 @@ const postAddProducts = (req, res, next) => {
       console.log("Product created successfully");
       res.redirect("/admin/products");
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => next(handleError(err)));
 };
 
 const getEditProducts = (req, res, next) => {

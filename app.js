@@ -16,6 +16,7 @@ app.set("views", "views");
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
+const errorRoutes = require("./routes/error");
 
 const { getError } = require("./controllers/error");
 const User = require("./models/user");
@@ -26,9 +27,11 @@ const MONGODB_URI =
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+
 const store = new MongoDBStore({
   uri: MONGODB_URI,
 });
+
 app.use(
   session({
     secret: "my secret",
@@ -41,10 +44,17 @@ app.use(flash());
 
 app.use((req, res, next) => {
   if (req.session.user) {
-    User.findById(req.session.user._id).then((user) => {
-      req.user = user;
-      next();
-    });
+    User.findById(req.session.user._id)
+      .then((user) => {
+        if (!user) {
+          next();
+        }
+        req.user = user;
+        next();
+      })
+      .catch((err) => {
+        throw new Error(err);
+      });
   } else {
     next();
   }
@@ -52,7 +62,9 @@ app.use((req, res, next) => {
 
 app.use((req, res, next) => {
   token.secret((err, secret) => {
-    if (err) console.log(err);
+    if (err) {
+      throw new Error(err);
+    }
 
     const csrfToken = token.create(secret);
 
@@ -65,8 +77,13 @@ app.use((req, res, next) => {
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
+app.use(errorRoutes);
 
 app.use(getError);
+
+app.use((err, req, res, next) => {
+  res.redirect("/500");
+});
 
 mongoose
   .connect(MONGODB_URI)
@@ -76,5 +93,5 @@ mongoose
     });
   })
   .catch((err) => {
-    console.log(err);
+    throw new Error(err);
   });
