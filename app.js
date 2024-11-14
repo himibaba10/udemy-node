@@ -21,9 +21,8 @@ const errorRoutes = require("./routes/error");
 const { getError } = require("./controllers/error");
 const User = require("./models/user");
 const { default: mongoose } = require("mongoose");
-
-const MONGODB_URI =
-  "mongodb+srv://himibaba10:PDSc0wmxY1wiVn65@cluster0.jtbd7.mongodb.net/node-complete?retryWrites=true&w=majority&appName=Cluster0";
+const { MONGODB_URI } = require("./constants");
+const runServer = require("./server");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
@@ -85,13 +84,4 @@ app.use((err, req, res, next) => {
   res.redirect("/500");
 });
 
-mongoose
-  .connect(MONGODB_URI)
-  .then((result) => {
-    app.listen(3000, () => {
-      console.log("App is running on port 3000 and connected to Mongoose");
-    });
-  })
-  .catch((err) => {
-    throw new Error(err);
-  });
+runServer(app);
