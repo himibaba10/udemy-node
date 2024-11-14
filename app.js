@@ -52,7 +52,8 @@ app.use((req, res, next) => {
         next();
       })
       .catch((err) => {
-        throw new Error(err);
+        //since the error is inside the asyncronous function, we need to call next() to send the error to the global error handler
+        next(new Error(err));
       });
   } else {
     next();
@@ -80,7 +81,9 @@ app.use(errorRoutes);
 
 app.use(getError);
 
+// Global Error Handler
 app.use((err, req, res, next) => {
+  console.log(err);
   res.redirect("/500");
 });
 
