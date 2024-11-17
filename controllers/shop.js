@@ -1,5 +1,6 @@
 const Order = require("../models/order");
 const Product = require("../models/product");
+const path = require("path");
 
 const getProducts = (req, res, next) => {
   Product.find()
@@ -33,6 +34,7 @@ const getProduct = (req, res, next) => {
 
 const getIndex = (req, res, next) => {
   Product.find()
+    .lean() // This returns plain JavaScript objects
     .then((products) => {
       res.render("shop/index", {
         prods: products,
