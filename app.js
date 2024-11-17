@@ -20,7 +20,6 @@ const errorRoutes = require("./routes/error");
 
 const { getError } = require("./controllers/error");
 const User = require("./models/user");
-const { default: mongoose } = require("mongoose");
 const { MONGODB_URI } = require("./constants");
 const runServer = require("./server");
 
