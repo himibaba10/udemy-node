@@ -26,9 +26,6 @@ router.post(
     body("title")
       .isAlphanumeric("en-US", { ignore: " " })
       .withMessage("Title can only contain alphabets and numbers"),
-    body("imageUrl")
-      .isURL()
-      .withMessage("Image field can only contain valid url"),
     body("price").isFloat({ min: 0 }).withMessage("Price can't be negative"),
     body("description")
       .isLength({ min: 10 })

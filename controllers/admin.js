@@ -35,7 +35,7 @@ const postAddProducts = (req, res, next) => {
   const productInfo = {
     title: req.body.title,
     price: req.body.price,
-    imageUrl: req.body.imageUrl,
+    imageUrl: req.file.path,
     description: req.body.description,
     userId: req.session.user._id,
   };
@@ -47,7 +47,7 @@ const postAddProducts = (req, res, next) => {
       .join("; ");
 
     const titleError = errors.array().some((el) => el.path === "title");
-    const imageUrlError = errors.array().some((el) => el.path === "imageUrl");
+    const imageError = errors.array().some((el) => el.path === "image");
     const priceError = errors.array().some((el) => el.path === "price");
     const descriptionError = errors
       .array()
@@ -62,7 +62,7 @@ const postAddProducts = (req, res, next) => {
       errorMessage,
       validationErrors: {
         titleError,
-        imageUrlError,
+        imageError,
         priceError,
         descriptionError,
       },
@@ -108,7 +108,7 @@ const postEditProduct = (req, res, next) => {
   const productData = {
     title: req.body.title,
     price: req.body.price,
-    imageUrl: req.body.imageUrl,
+    image: req.file,
     description: req.body.description,
   };
 
