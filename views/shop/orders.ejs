@@ -12,7 +12,7 @@
                         <ul>
                             <% for(const product of order.products) { %>
                                 <li>
-                                    <%= product.productData.title %> (<%= product.quantity %>)
+                                    <%= product.productData.title %> (<%= product.quantity %>) - <a href="/orders/<%= order._id %>">Invoice</a>
                                 </li>
                                 <% } %>
                         </ul>

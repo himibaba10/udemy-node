@@ -1,5 +1,6 @@
 const Order = require("../models/order");
 const Product = require("../models/product");
+const fs = require("fs");
 const path = require("path");
 
 const getProducts = (req, res, next) => {
@@ -153,6 +154,39 @@ const getOrders = (req, res, next) => {
 //   });
 // };
 
+const getInvoice = (req, res, next) => {
+  const orderId = req.params.orderId;
+
+  const invoiceName = `invoice-${orderId}.pdf`;
+  const invoicePath = path.join("data", "invoices", invoiceName);
+
+  //Just to check whether the invoice belongs to the authorized user
+  Order.findById(orderId).then((order) => {
+    if (!order) {
+      return next(new Error("Order not found."));
+    }
+
+    if (order.user.userId.toString() !== req.user._id.toString()) {
+      return next(new Error("Unauthorized access."));
+    }
+
+    fs.readFile(invoicePath, (err, data) => {
+      if (err) {
+        console.log(err);
+        return next(err);
+      }
+
+      //setting header so we know it is a pdf and can be downloaded as pdf
+      res.setHeader("Content-Type", "application/pdf");
+
+      //attachment means download, inline means open the file in the browser
+      res.setHeader("Content-Disposition", `inline; filename="${invoiceName}"`);
+
+      res.send(data);
+    });
+  });
+};
+
 module.exports = {
   getProducts,
   getProduct,
@@ -163,4 +197,5 @@ module.exports = {
   postOrder,
   getOrders,
   // getCheckout,
+  getInvoice,
 };
