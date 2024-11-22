@@ -7,12 +7,12 @@
                 <% if(orders.length) { %>
 
                     <% for(const order of orders) { %>
-                        <h2># <%= order._id%>
+                        <h2># <%= order._id%> - <a href="/orders/<%= order._id %>">Invoice</a>
                         </h2>
                         <ul>
                             <% for(const product of order.products) { %>
                                 <li>
-                                    <%= product.productData.title %> (<%= product.quantity %>) - <a href="/orders/<%= order._id %>">Invoice</a>
+                                    <%= product.productData.title %> (<%= product.quantity %>)
                                 </li>
                                 <% } %>
                         </ul>

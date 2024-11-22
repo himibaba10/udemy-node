@@ -2,6 +2,7 @@ const Order = require("../models/order");
 const Product = require("../models/product");
 const fs = require("fs");
 const path = require("path");
+const PDFDocument = require("pdfkit");
 
 const getProducts = (req, res, next) => {
   Product.find()
@@ -134,7 +135,6 @@ const postOrder = (req, res, next) => {
 const getOrders = (req, res, next) => {
   Order.find({ "user.userId": req.session.user._id })
     .then((orders) => {
-      console.log(orders);
       res.render("shop/orders", {
         pageTitle: "Your Orders",
         path: "/orders",
@@ -185,10 +185,37 @@ const getInvoice = (req, res, next) => {
     //   res.send(data);
     // });
 
-    const file = fs.createReadStream(invoicePath);
+    // Since it might be a big file, that's why we need to get it as a stream
+    // const file = fs.createReadStream(invoicePath);
+    // res.setHeader("Content-Type", "application/pdf");
+    // res.setHeader("Content-Disposition", `inline; filename="${invoiceName}"`);
+    // file.pipe(res);
+
+    const pdfDoc = new PDFDocument();
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", `inline; filename="${invoiceName}"`);
-    file.pipe(res);
+
+    pdfDoc.pipe(fs.createWriteStream(invoicePath));
+    pdfDoc.pipe(res);
+
+    pdfDoc.fontSize(18).text("Invoice");
+
+    pdfDoc.text("-----------------------");
+
+    let totalPrice = 0;
+    order.products.forEach((product) => {
+      totalPrice += product.productData.price * product.quantity;
+      pdfDoc
+        .fontSize(14)
+        .text(
+          `${product.productData.title} - ${product.quantity} x $${product.productData.price}`
+        );
+    });
+    pdfDoc.text("-----------------------");
+
+    pdfDoc.fontSize(14).text(`Total: $${totalPrice}`);
+
+    pdfDoc.end();
   });
 };
 
