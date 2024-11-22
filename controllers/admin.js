@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 const Product = require("../models/product");
 const handleError = require("../utils/handleError");
+const { deleteFile } = require("../utils/file");
 
 const getProducts = (req, res, next) => {
   Product.find({ userId: req.user._id })
@@ -123,8 +124,12 @@ const postEditProduct = (req, res, next) => {
 };
 
 const postDeleteProduct = (req, res, next) => {
-  Product.findOneAndDelete({ _id: req.body.id, userId: req.user._id })
-    .then((result) => {
+  Product.findOne({ _id: req.body.id, userId: req.user._id })
+    .then((product) => {
+      deleteFile(product?.imageUrl);
+      return Product.deleteOne({ _id: req.body.id });
+    })
+    .then(() => {
       console.log("Product deleted successfully");
       return res.redirect("/admin/products");
     })
