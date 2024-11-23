@@ -3,15 +3,21 @@ const Product = require("../models/product");
 const fs = require("fs");
 const path = require("path");
 const PDFDocument = require("pdfkit");
+const { ITEMS_PER_PAGE } = require("../constants");
 
 const getProducts = (req, res, next) => {
+  const pageNumber = +req.query.page || 1;
   Product.find()
+    .skip((pageNumber - 1) * ITEMS_PER_PAGE)
+    .limit(ITEMS_PER_PAGE)
     .then((products) => {
       res.render("shop/product-list", {
         prods: products,
         pageTitle: "All Products",
         path: "/products",
         isAuthenticated: req.session.isLoggedIn,
+        currentPage: pageNumber,
+        itemsPerPage: ITEMS_PER_PAGE,
       });
     })
     .catch((err) => {
@@ -35,13 +41,18 @@ const getProduct = (req, res, next) => {
 };
 
 const getIndex = (req, res, next) => {
+  const pageNumber = +req.query.page || 1;
   Product.find()
+    .skip((pageNumber - 1) * ITEMS_PER_PAGE)
+    .limit(ITEMS_PER_PAGE)
     .lean() // This returns plain JavaScript objects
     .then((products) => {
       res.render("shop/index", {
         prods: products,
         pageTitle: "Shop",
         path: "/",
+        currentPage: pageNumber,
+        itemsPerPage: ITEMS_PER_PAGE,
       });
     })
     .catch((err) => {
