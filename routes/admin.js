@@ -5,7 +5,7 @@ const {
   getProducts,
   getEditProducts,
   postEditProduct,
-  postDeleteProduct,
+  deleteProduct,
 } = require("../controllers/admin");
 const { isAuth } = require("../middlewares/is-auth");
 const { body } = require("express-validator");
@@ -33,6 +33,8 @@ router.post(
   ],
   postAddProducts
 );
-router.post("/delete-product", isAuth, postDeleteProduct);
+
+// DELETE ROUTES
+router.delete("/product/:productId", isAuth, deleteProduct);
 
 module.exports = router;
