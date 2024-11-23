@@ -108,6 +108,32 @@ const deleteCart = (req, res, next) => {
     });
 };
 
+const getCheckout = (req, res, next) => {
+  req.user
+    .getCart()
+    .then((user) => {
+      let totalPrice = 0;
+      const products = user.cart.items.map((product) => {
+        totalPrice += product.productId.price * product.quantity;
+        return {
+          _id: product.productId._id,
+          title: product.productId.title,
+          quantity: product.quantity,
+        };
+      });
+
+      res.render("shop/checkout", {
+        products: products,
+        pageTitle: "Checkout",
+        path: "/checkout",
+        isAuthenticated: req.session.isLoggedIn,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
 const postOrder = (req, res, next) => {
   req.user
     .getCart()
@@ -157,13 +183,6 @@ const getOrders = (req, res, next) => {
       console.log(err);
     });
 };
-
-// const getCheckout = (req, res, next) => {
-//   res.render("shop/checkout", {
-//     pageTitle: "Checkout",
-//     path: "/checkout",
-//   });
-// };
 
 const getInvoice = (req, res, next) => {
   const orderId = req.params.orderId;
@@ -237,8 +256,8 @@ module.exports = {
   getCart,
   postCart,
   deleteCart,
+  getCheckout,
   postOrder,
   getOrders,
-  // getCheckout,
   getInvoice,
 };
