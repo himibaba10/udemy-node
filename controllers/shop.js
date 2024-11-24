@@ -4,6 +4,9 @@ const fs = require("fs");
 const path = require("path");
 const PDFDocument = require("pdfkit");
 const { ITEMS_PER_PAGE } = require("../constants");
+const stripe = require("stripe")(
+  "sk_test_51IfozGLPGv78GAwMzYzGvpCLS5VZ3zsOPfI9EdYpHpqeUMosFR1d4bVw4Vmaf1tCJ72P9TjiuBKArLI10nQuCUL200TiDf6Z5Z"
+);
 
 const getProducts = (req, res, next) => {
   const pageNumber = +req.query.page || 1;
@@ -249,6 +252,54 @@ const getInvoice = (req, res, next) => {
   });
 };
 
+const createCheckoutSession = (req, res, next) => {
+  // let productData = [];
+  req.user
+    .getCart()
+    .then((user) => {
+      return user.cart.items.map((product) => ({
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: product.productId.title,
+            description: product.productId.description,
+          },
+          unit_amount: product.productId.price * 100,
+        },
+        quantity: product.quantity,
+      }));
+    })
+    .then((productData) => {
+      return stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        line_items: productData,
+        mode: "payment",
+        success_url: `${req.protocol}://${req.get("host")}/checkout/success`,
+        cancel_url: `${req.protocol}://${req.get("host")}/checkout/cancel`,
+      });
+    })
+    .then((session) => {
+      req.user.clearCart().then(() => {
+        res.redirect(303, session.url);
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const getSuccess = (req, res, next) => {
+  res.send(`
+    <h1>You have successfully completed the purchase!</h1>
+    `);
+};
+
+const getCancel = (req, res, next) => {
+  res.send(`
+    <h1>You canceled the order!</h1>
+    `);
+};
+
 module.exports = {
   getProducts,
   getProduct,
@@ -260,4 +311,7 @@ module.exports = {
   postOrder,
   getOrders,
   getInvoice,
+  createCheckoutSession,
+  getSuccess,
+  getCancel,
 };
